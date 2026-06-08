@@ -1,17 +1,36 @@
 import datetime
-from features.weather import get_weather
+
 from config import USER_NAME
 from utils.speech import speak
 
+from features.weather import get_weather
 from features.browser import (
     open_google,
     open_youtube,
     google_search
 )
-
 from features.wikipedia_search import (
     search_wikipedia
 )
+
+
+def extract_city(command):
+
+    phrases = [
+        "what's the weather in",
+        "what is the weather in",
+        "tell me the weather in",
+        "weather in",
+        "weather"
+    ]
+
+    command = command.lower()
+
+    for phrase in phrases:
+        if phrase in command:
+            return command.replace(phrase, "").strip()
+
+    return ""
 
 
 def process_command(command):
@@ -35,13 +54,9 @@ def process_command(command):
 
     elif "weather" in command:
 
-        city = command.replace(
-            "weather in",
-            ""
-        ).replace(
-            "weather",
-            ""
-        ).strip()
+        city = extract_city(command)
+
+        print(f"City extracted: {city}")
 
         if city:
             get_weather(city)

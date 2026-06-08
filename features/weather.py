@@ -1,7 +1,12 @@
+import os
 import requests
+
+from dotenv import load_dotenv
 from utils.speech import speak
 
-API_KEY = "bc3516a21be947b42607eac36212b100"
+load_dotenv()
+
+API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 
 def get_weather(city):
@@ -14,21 +19,26 @@ def get_weather(city):
     try:
         response = requests.get(url)
         data = response.json()
+
         print(data)
-        if str[data.get("cod")] != 200:
-            print(data)
+
+        if str(data.get("cod")) != "200":
             speak(data.get("message", "Weather lookup failed"))
             return
 
         temp = data["main"]["temp"]
         feels_like = data["main"]["feels_like"]
+        humidity = data["main"]["humidity"]
         description = data["weather"][0]["description"]
 
         speak(
-            f"In {city}, it is {temp} degrees Celsius "
-            f"with {description}. "
-            f"It feels like {feels_like} degrees."
+            f"Current weather in {city}. "
+            f"Temperature is {round(temp)} degrees Celsius. "
+            f"Condition is {description}. "
+            f"It feels like {round(feels_like)} degrees. "
+            f"Humidity is {humidity} percent."
         )
 
-    except Exception:
+    except Exception as e:
+        print("Weather Error:", e)
         speak("Unable to fetch weather information")

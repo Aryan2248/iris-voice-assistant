@@ -1,5 +1,5 @@
 import datetime
-
+from features.weather import get_weather
 from config import USER_NAME
 from utils.speech import speak
 
@@ -26,18 +26,27 @@ def process_command(command):
         speak("My name is IRIS")
 
     elif "time" in command:
-        current_time = datetime.datetime.now().strftime(
-            "%I:%M %p"
-        )
-
+        current_time = datetime.datetime.now().strftime("%I:%M %p")
         speak(f"The time is {current_time}")
 
     elif "date" in command:
-        today = datetime.date.today().strftime(
-            "%d %B %Y"
-        )
-
+        today = datetime.date.today().strftime("%d %B %Y")
         speak(f"Today's date is {today}")
+
+    elif "weather" in command:
+
+        city = command.replace(
+            "weather in",
+            ""
+        ).replace(
+            "weather",
+            ""
+        ).strip()
+
+        if city:
+            get_weather(city)
+        else:
+            speak("Please tell me the city name")
 
     elif "open google" in command:
         open_google()
